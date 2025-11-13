@@ -6,6 +6,102 @@
     <link rel="stylesheet" href="./PerdroCasani.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <title>Pedro Casani</title>
+    <!-- ESTILOS SOLO PARA EL MODAL / TRIVIA -->
+    <style>
+        /* Enlace "Trivia" tendrá el estilo del nav por tu CSS externo */
+
+        /* Fondo oscuro del modal */
+        .modal {
+            display: none;
+            position: fixed;
+            left: 0; 
+            top: 0;
+            width: 100%; 
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            z-index: 1000;
+        }
+
+        /* Contenido del modal */
+        .modal-contenido {
+            background: #fff8f0;
+            margin: 4% auto;
+            padding: 20px 24px 26px;
+            border-radius: 14px;
+            max-width: 650px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+            position: relative;
+        }
+
+        .modal-contenido h2 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 18px;
+        }
+
+        .cerrar { 
+            position: absolute;
+            right: 14px;
+            top: 10px;
+            cursor: pointer; 
+            font-size: 26px; 
+            color: #6b7280;
+        }
+
+        .cerrar:hover {
+            color: #111827;
+        }
+
+        #formTrivia p {
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        #formTrivia label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 0.95rem;
+        }
+
+        #formTrivia button[type="submit"] {
+            margin-top: 18px;
+            padding: 8px 18px;
+            border-radius: 999px;
+            border: none;
+            background: #4b8b3b;
+            color: #ffffff;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        #formTrivia button[type="submit"]:hover {
+            background: #3b6f30;
+        }
+
+        #resultado { 
+            margin-top: 1em; 
+            padding-top: 10px;
+            border-top: 1px solid #e5e7eb;
+            font-size: 0.95rem;
+        }
+
+        .correcta { 
+            color: #15803d; 
+            font-weight: 600;
+        }
+
+        .incorrecta { 
+            color: #b91c1c; 
+            font-weight: 500;
+        }
+
+        #resultado h4 {
+            margin-top: 10px;
+            margin-bottom: 6px;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -17,8 +113,8 @@
         <a href="#virtudes">Virtudes</a>
         <a href="#Oracion hacia el">Oracion Hacia Él</a>
         <a href="#galeriadepersonajes">Galería de Personajes</a>
-         <!-- ENLACE A LA TRIVIA -->
-    <a href="Trivia.html">Trivia</a>
+       <!-- ESTE abre la TRIVIA como MODAL -->
+        <a href="#" id="abrirTrivia">Trivia</a>
     </nav>
     <main>
         <section id="biografia" class="seccion-principal">
@@ -104,5 +200,153 @@ Su amor a la pobreza religiosa fue la razón de su unión espiritual con san Jos
             <li><a><i class="bi bi-twitter"></i></a></li>
         </ul>
     </footer>
+
+     <!-- 🔵 MODAL DE LA TRIVIA EN LA MISMA PÁGINA -->
+    <div id="modalTrivia" class="modal">
+        <div class="modal-contenido">
+            <span class="cerrar">&times;</span>
+            <h2>Trivia sobre el beato Pedro Casani</h2>
+
+            <form id="formTrivia">
+                <p><strong>1.</strong> ¿En qué país nació Pedro Casani?</p>
+                <label><input type="radio" name="p1" value="Italia"> Italia</label>
+                <label><input type="radio" name="p1" value="España"> España</label>
+                <label><input type="radio" name="p1" value="Francia"> Francia</label>
+
+                <p><strong>2.</strong> ¿Dónde nació el beato Pedro Casani?</p>
+                <label><input type="radio" name="p2" value="Lucca"> Lucca</label>
+                <label><input type="radio" name="p2" value="Roma"> Roma</label>
+                <label><input type="radio" name="p2" value="Florencia"> Florencia</label>
+
+                <p><strong>3.</strong> ¿En qué basílica fue ordenado sacerdote?</p>
+                <label><input type="radio" name="p3" value="Letran"> Basílica de Letrán</label>
+                <label><input type="radio" name="p3" value="Lujan"> Basílica de Luján</label>
+                <label><input type="radio" name="p3" value="San Marcos"> Basílica de San Marcos</label>
+
+                <p><strong>4.</strong> ¿A qué dedicó especialmente su vida?</p>
+                <label><input type="radio" name="p4" value="Educacion"> A la educación de niños y jóvenes</label>
+                <label><input type="radio" name="p4" value="Templos"> A construir templos</label>
+                <label><input type="radio" name="p4" value="Hospitales"> A trabajar en hospitales</label>
+
+                <p><strong>5.</strong> ¿Qué día se celebra su memoria en la Iglesia?</p>
+                <label><input type="radio" name="p5" value="16"> 16 de Octubre</label>
+                <label><input type="radio" name="p5" value="17"> 17 de Octubre</label>
+                <label><input type="radio" name="p5" value="1"> 1 de Octubre</label>
+
+                <button type="submit">Enviar respuestas</button>
+            </form>
+
+            <div id="resultado"></div>
+        </div>
+    </div>
+
+    <!-- SCRIPT: ABRIR/CERRAR MODAL Y CORREGIR TRIVIA -->
+    <script>
+        const modal = document.getElementById("modalTrivia");
+        const btnAbrir = document.getElementById("abrirTrivia");
+        const btnCerrar = document.querySelector("#modalTrivia .cerrar");
+
+        // Abrir modal desde el nav
+        btnAbrir.addEventListener("click", function(e) {
+            e.preventDefault();                // evita que el enlace salte arriba
+            modal.style.display = "block";
+        });
+
+        // Cerrar con la X
+        btnCerrar.addEventListener("click", function() {
+            modal.style.display = "none";
+        });
+
+        // Cerrar si se hace click fuera del contenido
+        window.addEventListener("click", function(e) {
+            if (e.target === modal) {
+                modal.style.display = "none";
+            }
+        });
+
+        // Corrección de la trivia
+        document.getElementById("formTrivia").addEventListener("submit", function(e) {
+            e.preventDefault();
+            let puntaje = 0;
+            let salida = "";
+
+            let r1 = document.querySelector('input[name="p1"]:checked');
+            let r2 = document.querySelector('input[name="p2"]:checked');
+            let r3 = document.querySelector('input[name="p3"]:checked');
+            let r4 = document.querySelector('input[name="p4"]:checked');
+            let r5 = document.querySelector('input[name="p5"]:checked');
+
+            // P1
+            if (r1) {
+                if (r1.value === "Italia") {
+                    puntaje++;
+                    salida += "<p class='correcta'>1. ✔ Correcta</p>";
+                } else {
+                    salida += "<p class='incorrecta'>1. ✖ Incorrecta. Correcta: Italia</p>";
+                }
+            } else {
+                salida += "<p class='incorrecta'>1. ✖ No respondida. Correcta: Italia</p>";
+            }
+
+            // P2
+            if (r2) {
+                if (r2.value === "Lucca") {
+                    puntaje++;
+                    salida += "<p class='correcta'>2. ✔ Correcta</p>";
+                } else {
+                    salida += "<p class='incorrecta'>2. ✖ Incorrecta. Correcta: Lucca</p>";
+                }
+            } else {
+                salida += "<p class='incorrecta'>2. ✖ No respondida. Correcta: Lucca</p>";
+            }
+
+            // P3
+            if (r3) {
+                if (r3.value === "Letran") {
+                    puntaje++;
+                    salida += "<p class='correcta'>3. ✔ Correcta</p>";
+                } else {
+                    salida += "<p class='incorrecta'>3. ✖ Incorrecta. Correcta: Basílica de Letrán</p>";
+                }
+            } else {
+                salida += "<p class='incorrecta'>3. ✖ No respondida. Correcta: Basílica de Letrán</p>";
+            }
+
+            // P4
+            if (r4) {
+                if (r4.value === "Educacion") {
+                    puntaje++;
+                    salida += "<p class='correcta'>4. ✔ Correcta</p>";
+                } else {
+                    salida += "<p class='incorrecta'>4. ✖ Incorrecta. Correcta: A la educación de niños y jóvenes</p>";
+                }
+            } else {
+                salida += "<p class='incorrecta'>4. ✖ No respondida. Correcta: A la educación de niños y jóvenes</p>";
+            }
+
+            // P5
+            if (r5) {
+                if (r5.value === "16") {
+                    puntaje++;
+                    salida += "<p class='correcta'>5. ✔ Correcta</p>";
+                } else {
+                    salida += "<p class='incorrecta'>5. ✖ Incorrecta. Correcta: 16 de Octubre</p>";
+                }
+            } else {
+                salida += "<p class='incorrecta'>5. ✖ No respondida. Correcta: 16 de Octubre</p>";
+            }
+
+            salida += `<h4>Puntaje final: ${puntaje} de 5</h4>`;
+            if (puntaje === 5) {
+                salida += "<p>¡Excelente trabajo!</p>";
+            } else if (puntaje >= 3) {
+                salida += "<p>Muy bien, conoces bastante sobre el beato Pedro Casani.</p>";
+            } else {
+                salida += "<p>Puedes repasar la página para aprender más sobre él.</p>";
+            }
+
+            document.getElementById("resultado").innerHTML = salida;
+        });
+    </script>
 </body>
 </html>
